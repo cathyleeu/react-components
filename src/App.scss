@@ -5,14 +5,15 @@
 .tag-input-form {
   display: flex;
   align-items: center;
-  // justify-content: center;
   margin: 3vw 0;
   border-top: 1px solid grey;
   border-bottom: 1px solid grey;
   padding: 0.5rem 0;
+  position: relative;
   &__input {
+    flex: 1;
+    height: 2rem;
     border: none;
-    height: 100%;
     outline: none;
   }
   &__item {
@@ -30,6 +31,25 @@
     padding: 0;
     vertical-align: text-bottom;
     margin-left: 0.5rem;
+  }
+  &__auto {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 120px;
+    height: 70px;
+    border: 1px solid grey;
+    li {
+      list-style: none;
+      padding: 0.5rem;
+      border-bottom: 1px solid gray;
+      &:hover {
+        background-color: aliceblue;
+      }
+      &[data-active="true"] {
+        background-color: aliceblue;
+      }
+    }
   }
 }
 
