@@ -1,5 +1,8 @@
-import React, { useState, useRef } from 'react';
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import React, { useState, useRef, useEffect } from 'react';
 import {uuidv4} from './Helper';
+import { Editor } from '@toast-ui/react-editor';
 import './App.scss';
 
 
@@ -96,11 +99,63 @@ const TagInput = () => {
     </div>
   )
 }
+
+/*
+  NOTE
+    1) class 로 mixin 디자인 대로 수정하면 되겠따 
+    2) header, caption, tag 가 따로 있는데 그것은 mirror 를 따로 건들여서 해야할까...? 
+    document.getElementsByClassName('tui-editor-contents')
+
+*/
+const ToastEditor = () => {
+  // get instance
+  const editorRef = useRef();
+  return (
+    <Editor
+      previewStyle="vertical"
+      height="600px"
+      initialEditType="markdown"
+      useCommandShortcut={true}
+      ref={editorRef}
+    />
+  );
+};
+
+
+const MixinEditor = () => {
+  const [head, setHead] = useState('');
+  const handleHeadline = (e) => {
+    const h = document.getElementById('headline');
+    setHead(e.target.value);
+    h.innerText = e.target.value;
+  };
+
+  return (
+    <div>
+      <input className="tag-input-form__input" placeholder="Headline" onChange={handleHeadline} value={head} />
+      {/* <TagInput /> */}
+      <ToastEditor />
+    </div>
+  )
+}
+
 function App() {
+  useEffect(() => {
+    const MIRROW = document.getElementsByClassName('tui-editor-contents')[0];
+    const headline = document.createElement('h1');
+    const tagline = document.createElement('div');
+    headline.id = 'headline';
+    headline.innerText = 'HEADLINE'
+    tagline.id = 'tagline';
+    MIRROW.append(headline);
+  }, [])
   return (
     <div className="App">
       <h1>Tag Input</h1>
       <TagInput />
+      
+      <h1>Mixin Editor</h1>
+      <MixinEditor />
     </div>
   );
 }
