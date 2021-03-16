@@ -1,20 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import { gsap } from 'gsap';
 import { lerp, getMousePos, getSiblings } from '../Helper';
 import './Cursor.scss';
-import websites from '../videos/websites.mp4'
-import branding from '../videos/branding.mp4'
-import apps from '../videos/apps.mp4'
 
 let mouse = { x: 0, y: 0 };
 window.addEventListener("mousemove", (ev) => (mouse = getMousePos(ev)));
 
 class Cursor {
-  constructor(el) {
+  constructor(el, targetItem) {
     this.Cursor = el;
     this.Cursor.style.opacity = 0;
-    this.Item = document.querySelectorAll(".hero-inner-link-item");
-    this.Hero = document.querySelector(".hero-inner");
+    this.Item = document.querySelectorAll(targetItem);
     this.bounds = this.Cursor.getBoundingClientRect();
     this.cursorConfigs = {
       x: { previous: 0, current: 0, amt: 0.2 },
@@ -111,66 +107,44 @@ class Cursor {
   }
 }
 
-const CursorComponent = () => {
+const CursorComponent = (props) => {
+  const {name, link, children} = props;
+  return (
+    <div data-video-src={name} className="hero-inner-link-item">
+      <div className="hero-inner-link-item-padding"></div>
+      <a href={link}> <span>{children}</span></a>
+    </div>
+  )
+}
+const CursorExample = () => {
   useEffect(() => {
-    new Cursor(document.querySelector(".cursor"));
+    new Cursor(document.querySelector(".cursor"), ".hero-inner-link-item");
   })
+  const data = [
+    {name: "websites", content:"A", src: "/videos/websites.mp4", link:"/"},
+    {name: "branding", content:"B", src: "/videos/branding.mp4", link:"/"},
+    {name: "apps", content:"C", src: "/videos/apps.mp4", link:"/"},
+  ];
   return (
     <>
       <section className="hero">
         <div className="container">
-          <div className="hero-inner">
-            <div className="hero-inner-banner">
-              <div className="hero-inner-col left"></div>
-              <div className="hero-inner-col right">
-                <div className="hero-inner-title">
-                  <h1>We make it happen</h1>
-                </div>
-                <div className="hero-inner-links">
-                  <div data-video-src="websites" className="hero-inner-link-item">
-                    <div className="hero-inner-link-item-padding"></div>
-                    <a href="/"> <span>AAAAA</span></a>
-                  </div>
-                  <div data-video-src="apps" className="hero-inner-link-item">
-                    <div className="hero-inner-link-item-padding"></div>
-                    <a href="/"> <span>BBBBB</span></a>
-                  </div>
-                  <div className="hero-inner-link-item" data-video-src="branding">
-                    <div className="hero-inner-link-item-padding"></div>
-                    <a href="/"> <span>CCCCC</span></a>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="hero-inner-links">
+            {data.map(d => <CursorComponent key={d.id} {...d}>{d.content}</CursorComponent>)}
           </div>
         </div>
       </section>
       <div className="cursor">
         <div className="cursor-media">
+        {data.map(d => 
           <video
-            src={websites}
+            src={process.env.PUBLIC_URL + d.src}
             preload="auto"
             autoPlay
             muted
             loop
-            id="websites"
-          ></video>
-          <video
-            src={apps}
-            preload="auto"
-            autoPlay
-            muted
-            loop
-            id="apps"
-          ></video>
-          <video
-            src={branding}
-            preload="auto"
-            autoPlay
-            muted
-            loop
-            id="branding"
-          ></video>
+            id={d.name}></video>
+          )}
         </div>
       </div>
     </>
@@ -178,4 +152,4 @@ const CursorComponent = () => {
 }
 
 
-export default CursorComponent
+export default CursorExample
