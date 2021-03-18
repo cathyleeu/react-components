@@ -1,13 +1,12 @@
 
 import React, {useEffect, useRef, forwardRef, createRef} from 'react';
 import { gsap } from 'gsap';
-import { lerp, getMousePos } from '../Helper';
 import LocomotiveScroll from 'locomotive-scroll';
 import ThumbnailAnimation from '../js/thumbnail';
+import {Cursor, CursorDot} from '../components/CursorDot';
+
 import './ThumbnailFull.scss';
 
-let mouse = {x: 0, y: 0};
-window.addEventListener('mousemove', ev => mouse = getMousePos(ev));
 
 const DATA = {
   thumb : [
@@ -23,49 +22,6 @@ const DATA = {
     },
   ]
 }
-class Cursor {
-  constructor(el) {
-    this.Cursor = el;
-    this.Cursor.style.opacity = 0;
-    this.bounds = this.Cursor.getBoundingClientRect();
-    this.cursorConfigs = {
-      x: { previous: 0, current: 0, amt: 0.2 },
-      y: { previous: 0, current: 0, amt: 0.2 },
-      scale: {previous: 1, current: 1, amt: 0.15},
-    };
-
-    this.onMouseMoveEv = () => {
-      this.cursorConfigs.x.previous = this.cursorConfigs.x.current = mouse.x - this.bounds.width/2;
-      this.cursorConfigs.y.previous = this.cursorConfigs.y.previous = mouse.y - this.bounds.height/2;
-      gsap.to(this.Cursor, {duration: 0.9, ease: 'Power3.easeOut', opacity: 1});
-      requestAnimationFrame(() => this.render());
-      window.removeEventListener('mousemove', this.onMouseMoveEv);
-    };
-    window.addEventListener('mousemove', this.onMouseMoveEv);
-  }
-  enter() {
-    this.cursorConfigs['scale'].current = 4.5;
-    //this.cursorConfigs['opacity'].current = 0.5;
-  }
-  leave() {
-    this.cursorConfigs['scale'].current = 1;
-    //this.cursorConfigs['opacity'].current = 1;
-  }
-  render() {
-    this.cursorConfigs['x'].current = mouse.x - this.bounds.width/2;
-    this.cursorConfigs['y'].current = mouse.y - this.bounds.height/2;
-
-    for (const key in this.cursorConfigs ) {
-        this.cursorConfigs[key].previous = lerp(this.cursorConfigs[key].previous, this.cursorConfigs[key].current, this.cursorConfigs[key].amt);
-    }
-                
-    this.Cursor.style.transform = `translateX(${(this.cursorConfigs['x'].previous)}px) translateY(${this.cursorConfigs['y'].previous}px) scale(${this.cursorConfigs['scale'].previous})`;
-    //this.Cursor.style.opacity = this.cursorConfigs['opacity'].previous;
-
-    requestAnimationFrame(() => this.render());
-  }
-}
-
 
 const Thumb = forwardRef((props, ref) => {
   const {num, src, title} = props;
@@ -78,7 +34,13 @@ const Thumb = forwardRef((props, ref) => {
   )
 })
 const ThumbnailFull = () => {
-  // TODO - REFACTOR : 
+  /*
+    TODO
+      0) slide !! 
+        - scroll horizontal 
+        - slide images 
+      1) Refactoring
+  */ 
   const thumbRefs = useRef([createRef(), createRef()]);
   const cursorRef = useRef(null);
   useEffect(() => {
@@ -132,11 +94,13 @@ const ThumbnailFull = () => {
 
     thumbAnimation.on('scrollready', () => {
       // Initialize the Locomotive scroll
+      // 전반적으로 부드럽게 스크롤링이 될 수 있도록 한다.... 
+      // 오.. 개 좋은데? 
       new LocomotiveScroll({
-          el: document.querySelector('[data-scroll-container]'),
-          smooth: true
+        el: document.querySelector('[data-scroll-container]'),
+        smooth: true
       });
-  });
+    });
   }, [])
   return (
     <>
@@ -144,16 +108,20 @@ const ThumbnailFull = () => {
         <section className="content">
           <div className="inner">
             <header className="content__header">
+              {/* meta */}
               <div className="content__meta">
                 <span className="content__meta-number">01</span>
                 <span className="content__meta-title">Gnostic Love</span>
               </div>
+              {/* title */}
               <h2 data-scroll="" data-scroll-speed="2" data-scroll-delay="0.1" data-scroll-position="top" className="content__title anim-block-wrap">
                 <span className="anim-block">Gnostic Love</span>
               </h2>
+              {/* subtitle */}
               <p data-scroll="" data-scroll-speed="1" data-scroll-delay="0.1" data-scroll-position="top" className="content__subtitle anim-block-wrap">
                 <span className="anim-block">What is wanted is not the will to believe, but the wish <br /> to find out, which is its exact opposite.</span>
               </p>
+              {/* content image */}
               <div className="content__intro content__breakout">
                 <div className="content__intro-imgWrap">
                   <img data-scroll="" data-scroll-speed="1" data-scroll-delay="0.1" data-scroll-position="top" className="content__intro-img" src={process.env.PUBLIC_URL + '/img/1.jpg'} alt="random" />
@@ -161,6 +129,7 @@ const ThumbnailFull = () => {
               </div>
             </header>
 
+            {/* content body */}
             <div className="content__body">
               <p className="content__body-para text-right cell--1-2">Then they opened the firmaments and the Light descended below to the lower regions and to those who were without form, having no true likeness. It was thus that they got the likeness of the Light for themselves. Some rejoiced because the Light had come to them, and that they had been made rich thereby. Others mourned because they were made poor and that which they thought they had was taken away from them. Thus came He, who went forth full of grace, and was taken captive with a captiviy. A light of glory was given to the æons who had received the Spark, and guardian spirits were sent to them who are Gamanêl, Etrempsouchos, and Agramas, and those who are with them. They bring help to those who have believed in the Spark of Light.</p>
               <p data-scroll="" data-scroll-offset="130" className="content__body-para cell--3 anim-show"><strong>The Crown that the Deathless pray for</strong></p>
@@ -176,9 +145,7 @@ const ThumbnailFull = () => {
           {DATA.thumb.map((t, index) => <Thumb key={t.num} ref={thumbRefs.current[index]} {...t}/>)}
         </section>
       </main>
-      <svg className="cursor" ref={cursorRef} width="30" height="30" viewBox="0 0 30 30">
-        <circle className="cursor__inner" cx="15" cy="15" r="7.5"/>
-      </svg>
+      <CursorDot ref={cursorRef} size={30} />
     </>
   )
 }
