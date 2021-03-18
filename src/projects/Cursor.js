@@ -78,7 +78,7 @@ class Cursor {
     let video = document.querySelector(`#${src}`);
     let siblings = getSiblings(video);
 
-    if (video.id == src) {
+    if (video.id === src) {
       gsap.set(video, { zIndex: 4, opacity: 1 });
       siblings.forEach((i) => {
         gsap.set(i, { zIndex: 1, opacity: 0 });
@@ -130,14 +130,15 @@ const CursorExample = () => {
       <section className="hero">
         <div className="container">
           <div className="hero-inner-links">
-            {data.map(d => <CursorComponent key={d.id} {...d}>{d.content}</CursorComponent>)}
+            {data.map((d, i) => <CursorComponent key={i} {...d}>{d.content}</CursorComponent>)}
           </div>
         </div>
       </section>
       <div className="cursor">
         <div className="cursor-media">
-        {data.map(d => 
+        {data.map((d, i) => 
           <video
+            key={i}
             src={process.env.PUBLIC_URL + d.src}
             preload="auto"
             autoPlay
