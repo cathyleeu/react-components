@@ -10,6 +10,7 @@ import TagInput from './projects/TagInput';
 import MixinEditor from './projects/MixinEditor';
 import ThumbnailFull from './projects/ThumbnailFull';
 import Cursor from './projects/Cursor';
+import HorizontalScroll from './projects/HorizontalScroll';
 import './App.scss';
 
 
@@ -36,6 +37,9 @@ function App() {
           <li>
             <Link to="/gsap-cursor">Gsap Cursor</Link>
           </li>
+          <li>
+            <Link to="/horizontal-scroll">HorizontalScroll</Link>
+          </li>
         </ul>
         <Switch>
           <Route exact path="/">
@@ -58,6 +62,9 @@ function App() {
           </Route>
           <Route path="/gsap-cursor">
             <Cursor />
+          </Route>
+          <Route path="/horizontal-scroll">
+            <HorizontalScroll />
           </Route>
         </Switch>
       </div>
