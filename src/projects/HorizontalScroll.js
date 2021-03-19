@@ -20,12 +20,11 @@ const DATA = {
   ]
 }
 
-
 const ScrollItem = (props) => {
   const {src, title, index} = props;
   return (
     <figure className="gallery__item">
-      <div className="gallery__item-img">
+      <div className="gallery__item-img" onClick={() => console.log('!!!')}>
         <div className="gallery__item-imginner" style={{'backgroundImage': `url(${process.env.PUBLIC_URL}${src})`}} data-scroll data-scroll-speed="-0.8">
         </div>
       </div>
@@ -55,21 +54,22 @@ const HorizontalScroll = () => {
       }
     });
     lscroll.update();
-  }, [])
+  });
   useEffect(() => {
-    const cursor = new Cursor(cursorRef.current);
-    [...document.querySelectorAll('a,.gallery__item-img,.gallery__item-number')].forEach(link => {
+    const cursor = new Cursor(cursorRef.current); 
+    [...document.querySelectorAll('.gallery__item-link,.gallery__item-img,.gallery__item-number')].forEach(link => {
       link.addEventListener('mouseenter', () => cursor.enter());
       link.addEventListener('mouseleave', () => cursor.leave());
     });
-  }, [])
+  });
+  
   return (
     <>
       <main data-scroll-container>
 				<div className="content">
 					<div className="gallery">
 						<div className="gallery__text"><span className="gallery__text-inner" data-scroll data-scroll-speed="1">Must</span><span data-scroll data-scroll-speed="-1.5" className="gallery__text-inner">ache</span></div>
-            {DATA.item.map((d, index) => <ScrollItem key={index} {...d} index={index}/>)}
+            {DATA.item.map((d, index) => <ScrollItem key={index} {...d} index={index} />)}
 						<div className="gallery__text"><span className="gallery__text-inner" data-scroll data-scroll-speed="1">Cómp</span><span data-scroll data-scroll-speed="3" className="gallery__text-inner">lice</span></div>
 					</div>
 				</div>
